@@ -6,11 +6,6 @@ public class MyLinkedList<T extends Comparable<T>> {
 	private Node<T> tail;
 	private int size;
 
-	public static class Node<T extends Comparable<T>> {
-		T data;
-		Node<T> next;
-	}
-
 	/**
 	 * 
 	 * @param data
@@ -144,7 +139,6 @@ public class MyLinkedList<T extends Comparable<T>> {
 				temp = temp.next;
 				return data;
 			}
-
 		};
 	}
 
@@ -152,6 +146,25 @@ public class MyLinkedList<T extends Comparable<T>> {
 		Node<T> node = new Node<>();
 		node.data = data;
 		return node;
+	}
+
+	public static class Node<T extends Comparable<T>> {
+		T data;
+		Node<T> next;
+	}
+
+	public interface MyListIterator<T extends Comparable<T>> {
+		/**
+		 * 
+		 * @return
+		 */
+		public boolean hasNext();
+
+		/**
+		 * 
+		 * @return
+		 */
+		public T next();
 	}
 
 	public static void main(String[] args) {
