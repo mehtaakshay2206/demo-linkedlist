@@ -1,5 +1,7 @@
 package org.ds;
 
+import java.util.function.Predicate;
+
 import org.ds.exception.BadRequestException;
 import org.ds.exception.InvalidInputException;
 
@@ -119,31 +121,49 @@ public class MyLinkedList<T extends Comparable<T>> {
 	 *            removes all the nodes whose data is greater than maxData
 	 */
 	public void deleteNodeGreaterThanMaxData(T maxData) {
+		Predicate<T> cond = (s1) -> {
+			if (s1.compareTo(maxData) == 1)
+				return true;
+			else
+				return false;
+		};
+		deleteNode(cond);
+	}
+
+	/**
+	 * 
+	 * @param pred
+	 *            Deletes all nodes based on the predicate
+	 */
+	private void deleteNode(Predicate<T> pred) {
 		Node<T> t1 = head;
 		Node<T> t2 = t1;
 
 		while (t1 != null) {
-			if (t1.data.compareTo(maxData) == 1) {
+			if (pred.test(t1.data)) {
 				t2.next = t1.next;
 				t1.next = null;
 				t1 = t2.next;
-				size--;
 			} else {
 				t2 = t1;
 				t1 = t1.next;
 			}
 		}
-
 	}
 
 	/**
-	 * Iterates the list and prints the toString() method of the data T
+	 * Iterates the list and prints the toString() method of the data of type T
 	 */
 	public void display() {
 		MyListIterator<T> iter = this.listIterator();
 		while (iter.hasNext()) {
 			System.out.println(iter.next().toString());
 		}
+	}
+
+	@FunctionalInterface
+	private static interface BiCond<T> {
+		public abstract boolean apply(T t);
 	}
 
 	public MyListIterator<T> listIterator() {
@@ -216,6 +236,10 @@ public class MyLinkedList<T extends Comparable<T>> {
 		list.insertFirst(4);
 		list.insertFirst(5);
 		list.insertLast(15);
+		list.insertLast(25);
+		list.insertLast(35);
+		list.insertLast(55);
+		list.insertLast(95);
 		System.out.println("Initial list");
 		list.display();
 		System.out.println("Insert 12 at 2nd position in the list");
@@ -228,9 +252,9 @@ public class MyLinkedList<T extends Comparable<T>> {
 		System.out.println("Print after deleting last element");
 		list.display();
 
-		System.out.println("Delete all nodes greater than 10");
-		list.deleteNodeGreaterThanMaxData(10);
-		System.out.println("Print after deleting all nodes greater than 10");
+		System.out.println("Delete all nodes greater than 15");
+		list.deleteNodeGreaterThanMaxData(15);
+		System.out.println("Print after deleting all nodes greater than 15");
 		list.display();
 	}
 
