@@ -1,14 +1,33 @@
 package org.ds;
 
+import org.ds.exception.BadRequestException;
+import org.ds.exception.InvalidInputException;
+
+/**
+ * 
+ */
 public class MyLinkedList<T extends Comparable<T>> {
 
+	/**
+	 * Reference pointer pointing to the start of the list
+	 */
 	private Node<T> head;
+
+	/**
+	 * Reference pointer pointing to the end of the list
+	 */
 	private Node<T> tail;
+
+	/**
+	 * Contains the size of the list
+	 */
 	private int size;
 
 	/**
 	 * 
 	 * @param data
+	 *            Inserts a new node with data of type T at the beginning of the
+	 *            list
 	 */
 	public void insertFirst(T data) {
 		Node<T> node = getNode(data);
@@ -20,6 +39,7 @@ public class MyLinkedList<T extends Comparable<T>> {
 			node.next = head;
 			head = node;
 		}
+
 		size++;
 		node = null;
 	}
@@ -27,6 +47,7 @@ public class MyLinkedList<T extends Comparable<T>> {
 	/**
 	 * 
 	 * @param data
+	 *            Inserts a new node with data of type T at the end of the list
 	 */
 	public void insertLast(T data) {
 		if (size == 0) {
@@ -43,11 +64,11 @@ public class MyLinkedList<T extends Comparable<T>> {
 	 * 
 	 * @param data
 	 * @param pos
-	 *            in the list to insert the node
+	 *            - the position at which the node is to be inserted in the list
 	 */
 	public void insert(T data, int pos) {
 		if (pos <= 0) {
-			// TODO : Throw an exception.
+			throw new InvalidInputException("Position should be greater than or equal to 1");
 		}
 
 		if (size == 0 || pos == 1) {
@@ -71,7 +92,7 @@ public class MyLinkedList<T extends Comparable<T>> {
 
 	/**
 	 * 
-	 * @return data of the deleted node
+	 * @return data of the deleted node Deletes the last element in the list
 	 */
 	public T deleteLast() {
 		if (size == 0) {
@@ -94,14 +115,15 @@ public class MyLinkedList<T extends Comparable<T>> {
 
 	/**
 	 * 
-	 * @param data
+	 * @param maxData
+	 *            removes all the nodes whose data is greater than maxData
 	 */
-	public void deleteNodeGreaterThanData(T data) {
+	public void deleteNodeGreaterThanMaxData(T maxData) {
 		Node<T> t1 = head;
 		Node<T> t2 = t1;
 
 		while (t1 != null) {
-			if (t1.data.compareTo(data) == 1) {
+			if (t1.data.compareTo(maxData) == 1) {
 				t2.next = t1.next;
 				t1.next = null;
 				t1 = t2.next;
@@ -114,10 +136,13 @@ public class MyLinkedList<T extends Comparable<T>> {
 
 	}
 
+	/**
+	 * Iterates the list and prints the toString() method of the data T
+	 */
 	public void display() {
 		MyListIterator<T> iter = this.listIterator();
 		while (iter.hasNext()) {
-			System.out.println(iter.next());
+			System.out.println(iter.next().toString());
 		}
 	}
 
@@ -133,7 +158,7 @@ public class MyLinkedList<T extends Comparable<T>> {
 			@Override
 			public T next() {
 				if (!hasNext()) {
-					// TODO: Throw an exception
+					new BadRequestException();
 				}
 				T data = temp.data;
 				temp = temp.next;
@@ -142,39 +167,70 @@ public class MyLinkedList<T extends Comparable<T>> {
 		};
 	}
 
+	/**
+	 * 
+	 * @param data
+	 * @return constructed node {@link Node} Constructs a node with data of type
+	 *         T
+	 */
 	private Node<T> getNode(T data) {
 		Node<T> node = new Node<>();
 		node.data = data;
 		return node;
 	}
 
+	/**
+	 * 
+	 * @param <T>
+	 */
 	public static class Node<T extends Comparable<T>> {
+		/**
+		 * contains the data of type T which extends Comparable interface
+		 */
 		T data;
+
+		/**
+		 * Pointer to the next node in the linked list
+		 */
 		Node<T> next;
 	}
 
 	public interface MyListIterator<T extends Comparable<T>> {
 		/**
 		 * 
-		 * @return
+		 * @return true if there are elements which are not iterated in the
+		 *         list, false , otherwise
 		 */
 		public boolean hasNext();
 
 		/**
 		 * 
-		 * @return
+		 * @return data of type T returns the next element in the list
 		 */
 		public T next();
 	}
 
+	// TODO: Need to remove after testing
 	public static void main(String[] args) {
 		MyLinkedList<Integer> list = new MyLinkedList<>();
 		list.insertFirst(4);
 		list.insertFirst(5);
-		list.insertFirst(10);
-		list.insertFirst(9);
 		list.insertLast(15);
+		System.out.println("Initial list");
+		list.display();
+		System.out.println("Insert 12 at 2nd position in the list");
 		list.insert(12, 2);
+		System.out.println("Print after adding 12 at the 2nd position");
+		list.display();
+
+		System.out.println("Delete the last element of the list");
+		list.deleteLast();
+		System.out.println("Print after deleting last element");
+		list.display();
+
+		System.out.println("Delete all nodes greater than 10");
+		list.deleteNodeGreaterThanMaxData(10);
+		System.out.println("Print after deleting all nodes greater than 10");
 		list.display();
 	}
 
